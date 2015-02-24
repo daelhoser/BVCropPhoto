@@ -4,6 +4,10 @@
 //  Created by Vitalii Bogdan on 11/06/2014 .
 //  Copyright (c) 2014. All rights reserved.
 
+
+#import <UIKit/UIKit.h>
+
+
 @interface BVCropPhotoView : UIView
 // crop for size
 @property (nonatomic, assign) CGSize cropSize;
