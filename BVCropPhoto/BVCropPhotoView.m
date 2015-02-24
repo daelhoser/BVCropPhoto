@@ -18,12 +18,12 @@
 @implementation BVCropPhotoView
 
 - (id)initWithFrame:(CGRect)frame {
-
+    
     self = [super initWithFrame:frame];
-
+    
     if ( self ) {
-        [self setBackgroundColor:[UIColor blackColor]];
-
+        [self setBackgroundColor:[UIColor whiteColor]];
+        
         self.scrollView = ({
             UIScrollView * scrollView = [[UIScrollView alloc] init];
             scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -36,34 +36,34 @@
             scrollView;
         });
         [self addSubview:self.scrollView];
-
+        
         self.imageView = ({
             UIImageView * imageView = [[UIImageView alloc] init];
             [imageView setContentMode:UIViewContentModeScaleAspectFit];
             imageView;
         });
         [self.scrollView addSubview:self.imageView];
-
+        
         self.overlayView = ({
             UIImageView * imageView = [[UIImageView alloc] init];
-            imageView.contentMode = UIViewContentModeCenter;
+            imageView.contentMode = UIViewContentModeScaleToFill;
             imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             imageView;
         });
         [self addSubview:self.overlayView];
-
+        
         self.cropSize = CGSizeMake(260, 290);
-
+        
         self.maximumZoomScale = 5;
     }
-
+    
     return self;
 }
 
 
 - (id)initWithSourceImage:(UIImage *)image {
     self = [super init];
-
+    
     if ( self ) {
         _sourceImage = image;
     }
@@ -76,7 +76,7 @@
     [super layoutSubviews];
     self.scrollView.frame = self.bounds;
     self.overlayView.frame = self.bounds;
-
+    
     if ( !self.imageView.image ) {
         [self setupZoomScale];
     }
@@ -86,27 +86,29 @@
 - (void)setupZoomScale {
     [self.imageView setImage:self.sourceImage];
     [self.imageView sizeToFit];
-
+    
     CGFloat offsetX = ceilf( self.scrollView.frame.size.width / 2 - self.cropSize.width / 2);
     CGFloat offsetY = ceilf( self.scrollView.frame.size.height / 2 - self.cropSize.height / 2);
     self.scrollView.contentInset = UIEdgeInsetsMake(offsetY, offsetX, offsetY, offsetX);
-
+    
+    
     [self.scrollView setContentSize:self.imageView.frame.size];
-
+    
     CGFloat zoomScale = 1.0;
-
+    
     if ( self.imageView.frame.size.width >= self.imageView.frame.size.height ) {
         zoomScale = self.cropSize.height / self.imageView.frame.size.height;
     } else {
         zoomScale = self.cropSize.width / self.imageView.frame.size.width;
     }
-
+    
+    
     [self.scrollView setMinimumZoomScale:zoomScale];
     [self.scrollView setMaximumZoomScale:self.maximumZoomScale * zoomScale];
     [self.scrollView setZoomScale:zoomScale];
-
+    
     [self.scrollView setContentOffset:CGPointMake((self.imageView.frame.size.width - self.scrollView.frame.size.width) / 2,
-            (self.imageView.frame.size.height - self.scrollView.frame.size.height) / 2)];
+                                                  (self.imageView.frame.size.height - self.scrollView.frame.size.height) / 2)];
 }
 
 
@@ -192,23 +194,23 @@
 
 - (UIImage *)croppedImage {
     CGFloat scale = self.sourceImage.size.width / self.scrollView.contentSize.width;
-
+    
     UIImage *finalImage = nil;
     CGRect targetFrame = CGRectMake((self.scrollView.contentInset.left + self.scrollView.contentOffset.x) * scale,
-            (self.scrollView.contentInset.top + self.scrollView.contentOffset.y) * scale,
-            self.cropSize.width * scale,
-            self.cropSize.height * scale);
-
+                                    (self.scrollView.contentInset.top + self.scrollView.contentOffset.y) * scale,
+                                    self.cropSize.width * scale,
+                                    self.cropSize.height * scale);
+    
     CGImageRef contextImage = CGImageCreateWithImageInRect([[self fixrotation:self.sourceImage] CGImage], targetFrame);
-
+    
     if (contextImage != NULL) {
         finalImage = [UIImage imageWithCGImage:contextImage
                                          scale:self.sourceImage.scale
                                    orientation:UIImageOrientationUp];
-
+        
         CGImageRelease(contextImage);
     }
-
+    
     return finalImage;
 }
 
@@ -237,6 +239,31 @@
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return self.imageView;
+}
+-(void)scrollViewDidZoom:(UIScrollView *)scrollView
+{
+    _imageView.frame = [self centeredFrameForScrollView:_scrollView andUIView:_imageView];
+}
+- (CGRect)centeredFrameForScrollView:(UIScrollView *)scroll andUIView:(UIView *)rView
+{
+    CGSize boundsSize = self.cropSize;
+    CGRect frameToCenter = rView.frame;
+    
+    // center horizontally
+    if (frameToCenter.size.width < boundsSize.width) {
+        frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2;
+    }
+    else {
+        frameToCenter.origin.x = 0;
+    }
+    // center vertically
+    if (frameToCenter.size.height < boundsSize.height) {
+        frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2;
+    }
+    else {
+        frameToCenter.origin.y = 0;
+    }
+    return frameToCenter;
 }
 
 

@@ -10,31 +10,31 @@
 	<string>CropPhoto</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>A5A26402-0CF3-49C0-9737-6584D286F15C</key>
-		<string>https://github.com/vvbogdan/BVCropPhoto</string>
+		<key>D559766CE8E79DBA2772C61B974F9F6C8E936970</key>
+		<string>https://github.com/daelhoser/BVCropPhoto.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Example/CropPhoto.xcodeproj/project.xcworkspace</string>
+	<string>Example/CropPhoto.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>A5A26402-0CF3-49C0-9737-6584D286F15C</key>
+		<key>D559766CE8E79DBA2772C61B974F9F6C8E936970</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/vvbogdan/BVCropPhoto</string>
+	<string>https://github.com/daelhoser/BVCropPhoto.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>A5A26402-0CF3-49C0-9737-6584D286F15C</string>
+	<string>D559766CE8E79DBA2772C61B974F9F6C8E936970</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>A5A26402-0CF3-49C0-9737-6584D286F15C</string>
+			<string>D559766CE8E79DBA2772C61B974F9F6C8E936970</string>
 			<key>IDESourceControlWCCName</key>
-			<string>CropPhoto</string>
+			<string>BVCropPhoto</string>
 		</dict>
 	</array>
 </dict>
