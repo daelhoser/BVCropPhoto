@@ -23,4 +23,7 @@
 // cropped image with cropSize
 - (UIImage *)croppedImage;
 
+
+@property(nonatomic) BOOL isProfile;
+
 @end

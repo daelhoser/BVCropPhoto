@@ -102,8 +102,15 @@
         zoomScale = self.cropSize.width / self.imageView.frame.size.width;
     }
     
+    if (_isProfile == NO)
+    {
+        [self.scrollView setMinimumZoomScale:self.cropSize.width / self.imageView.frame.size.width * 0.5];
+    }
+    else
+    {
+        [self.scrollView setMinimumZoomScale:self.cropSize.width / self.imageView.frame.size.width];
+    }
     
-    [self.scrollView setMinimumZoomScale:zoomScale];
     [self.scrollView setMaximumZoomScale:self.maximumZoomScale * zoomScale];
     [self.scrollView setZoomScale:zoomScale];
     
@@ -192,27 +199,78 @@
 }
 
 
-- (UIImage *)croppedImage {
-    CGFloat scale = self.sourceImage.size.width / self.scrollView.contentSize.width;
-    
-    UIImage *finalImage = nil;
-    CGRect targetFrame = CGRectMake((self.scrollView.contentInset.left + self.scrollView.contentOffset.x) * scale,
-                                    (self.scrollView.contentInset.top + self.scrollView.contentOffset.y) * scale,
-                                    self.cropSize.width * scale,
-                                    self.cropSize.height * scale);
-    
-    CGImageRef contextImage = CGImageCreateWithImageInRect([[self fixrotation:self.sourceImage] CGImage], targetFrame);
-    
-    if (contextImage != NULL) {
-        finalImage = [UIImage imageWithCGImage:contextImage
-                                         scale:self.sourceImage.scale
-                                   orientation:UIImageOrientationUp];
+- (UIImage *)croppedImage
+{
+    if (_isProfile == YES)
+    {
+        CGFloat scale = self.sourceImage.size.width / self.scrollView.contentSize.width;
         
-        CGImageRelease(contextImage);
+        UIImage *finalImage = nil;
+        CGRect targetFrame = CGRectMake((self.scrollView.contentInset.left + self.scrollView.contentOffset.x) * scale,
+                                        (self.scrollView.contentInset.top + self.scrollView.contentOffset.y) * scale,
+                                        self.cropSize.width * scale,
+                                        self.cropSize.height * scale);
+        
+        CGImageRef contextImage = CGImageCreateWithImageInRect([[self fixrotation:self.sourceImage] CGImage], targetFrame);
+        
+        if (contextImage != NULL) {
+            finalImage = [UIImage imageWithCGImage:contextImage
+                                             scale:self.sourceImage.scale
+                                       orientation:UIImageOrientationUp];
+            
+            CGImageRelease(contextImage);
+        }
+        
+        return finalImage;
+    }
+    else
+    {
+        
+        CGFloat scale = self.sourceImage.size.width / self.scrollView.contentSize.width;
+        
+        UIImage *finalImage = nil;
+        CGRect targetFrame = CGRectMake((self.scrollView.contentInset.left + self.scrollView.contentOffset.x) * scale,
+                                        (self.scrollView.contentInset.top + self.scrollView.contentOffset.y) * scale,
+                                        self.cropSize.width * scale,
+                                        self.cropSize.height * scale);
+        
+        CGImageRef contextImage = CGImageCreateWithImageInRect([[self fixrotation:self.sourceImage] CGImage], targetFrame);
+        
+        if (contextImage != NULL) {
+            finalImage = [UIImage imageWithCGImage:contextImage
+                                             scale:self.sourceImage.scale
+                                       orientation:UIImageOrientationUp];
+            
+            CGImageRelease(contextImage);
+        }
+        
+        if (_imageView.frame.size.width < self.scrollView.bounds.size.width)
+        {
+            UIGraphicsBeginImageContextWithOptions(self.scrollView.bounds.size, NO, 0);
+            
+            [self.scrollView drawViewHierarchyInRect:self.scrollView.bounds afterScreenUpdates:YES];
+            
+            UIImage *copied = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            finalImage = copied;
+            
+        }
+        return finalImage;
     }
     
-    return finalImage;
 }
+-(UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
+    //UIGraphicsBeginImageContext(newSize);
+    // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
+    // Pass 1.0 to force exact pixel size.
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 
 
 - (void)setOverlayImage:(UIImage *)overlayImage {
